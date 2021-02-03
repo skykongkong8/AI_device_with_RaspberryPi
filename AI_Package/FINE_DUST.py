@@ -2,6 +2,7 @@ class DustData:
     def __init__(self, districtName, issueGbn):
         self.districtName = districtName
         self.issueGbn = issueGbn
+
 def dust_list():
     import urllib.parse
     import requests

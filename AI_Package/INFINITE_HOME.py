@@ -1,10 +1,10 @@
 from universal_mouth import talk_kr as talk
 from universal_mouth import talk_en
-from universal_ears import listen
+from eternal_ears import listen
 from time import sleep
 
 """기본 생각 : 사용자의 말을 변수에 저장, 어떤 말인지에 따라 그에 맞는 답변을 주자."""
-master = listen()[1] #사용자의 말을 string으로 저장
+# master = listen()[1] #사용자의 말을 string으로 저장
 
 """리스트에 특정 글자가 있는지 없는지 판단하는 함수 check_item"""
 def check_item(my_list, word):
@@ -108,8 +108,9 @@ def dust_talk(string):
         talk('발령 중입니다.')
     except:
         talk('오늘 미세먼지 경보 발령된 지역이 없습니다아.')
-    
-    """master_handle의 번호에 맞는 모드를 설정하여주는 함수 mode_selection"""
+
+
+"""master_handle의 번호에 맞는 모드를 설정하여주는 함수 mode_selection"""
 def mode_selection(mode_number, master):
     if mode_number == -1:
         talk('죄송해요, 무슨 말인지 잘 알아듣지 못했어요오')
@@ -153,6 +154,25 @@ def mode_selection(mode_number, master):
         talk('저는 당신을 도와주는 인공지능 스피커입니다. 시계, 타이머, 실시간 코로나 확진자, 미세먼지 경보 발령 현황 등에 대하여 말씀드릴 수 있습니다. 간단한 농담이나 랩도 할 줄 안답니다. 날씨 기능은 업데이트 준비중이에요.')
         
 """작동 코드"""
+import RPi.GPIO as g
 
-MODE = master_handle(master)
-mode_selection(MODE, master)
+g.setmode(g.BCM)
+sensor = 26
+g.setup(sensor, g.IN)
+print('Press ctrl+C to abort')
+
+try:
+    while True:
+        value = g.input(sensor)
+        if value == True:
+            master = listen()[1]
+            print('Sensor Detected')
+            MODE = master_handle(master)
+            mode_selection(MODE, master)
+        else:
+            pass
+except KeyboardInterrupt:
+    g.cleanup()
+    print('Goodbye.')
+finally:
+    g.cleanup()

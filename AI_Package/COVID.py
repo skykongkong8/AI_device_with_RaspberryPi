@@ -53,8 +53,8 @@ def Daily_Patient():
         "ServiceKey" : decoded_key,
         "pageNo" : "1",
         "numOfRows" : "10",
-        "startCreateDt" : "{}{}{}".format(str(past.year), str(past.month).zfill(2), str(past.day)),# 날짜를 잘 조절할 것! --오늘이 3일이하면 :(
-        "endCreateDt" : "{}{}{}".format(str(yesterday.year), str(yesterday.month).zfill(2), str(yesterday.day)) #날짜를 if문으로 조절하기
+        "startCreateDt" : "{}{}{}".format(str(past.year), str(past.month).zfill(2), str(past.day).zfill(2)),# 날짜를 잘 조절할 것! --오늘이 3일이하면 :(
+        "endCreateDt" : "{}{}{}".format(str(yesterday.year), str(yesterday.month).zfill(2), str(yesterday.day).zfill(2)) #날짜를 if문으로 조절하기
     }
     resp = requests.get(service_url, params = params)
     # print(resp.content)
