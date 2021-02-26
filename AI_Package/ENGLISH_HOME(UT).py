@@ -1,5 +1,5 @@
-from universal_mouth import talk_kr as talk
-from universal_mouth import talk_en
+from USB_mouth import talk_kr as talk
+from USB_mouth import talk_en
 from eternal_ears import listen
 from time import sleep
 
@@ -31,30 +31,30 @@ def master_handle(string):
     my_list = list(string.lower().split(' '))
     
     #3 각각의 상황에 따라 간단한 예상 NLP처리를 해보고, 숫자로 모드를 바꿔보자
-    if check_item(my_list, '날씨'):
+    if check_item(my_list, 'weather'):
 #         weather = True
         return 0
-    elif check_item(my_list, '코로나'):
+    elif check_item(my_list, 'COVID') or check_item(my_list, 'corona') or check_item(my_list, 'virus'):
 #         COVID = True
         return 1
-    elif check_item(my_list, '몇'):
-        if check_item(my_list, '시') or check_item(my_list, '시야') or check_item(my_list, '분') or check_item(my_list, '분이야'):
+    elif check_item(my_list, 'time'):
+        if check_item(my_list, 'what'):
 #             clock = True
             return 2
-    elif check_item(my_list, '랩'):
-        if check_item(my_list, '해') or check_item(my_list, '줘') or check_item(my_list, '해줘'):
+    elif check_item(my_list, 'rap'):
+        if check_item(my_list, 'try') or check_item(my_list, 'give') or check_item(my_list, 'show'):
 #             Rap = True
             return 3
-    elif check_item(my_list, '타이머'):
+    elif check_item(my_list, 'timer'):
 #         Timer = True
         return 4
-    elif check_item(my_list, '재미있는') or check_item(my_list, '재밌는') or check_item(my_list, '웃긴') or check_item(my_list,'재미'):
-        if check_item(my_list, '이야기') or check_item(my_list, '얘기') or check_item(my_list, '농담') or check_item(my_list, '말'):
+    elif check_item(my_list, 'funny') or check_item(my_list, 'fun') or check_item(my_list, 'joke') or check_item(my_list,'jokes'):
+        if check_item(my_list, 'tell') or check_item(my_list, 'say') or check_item(my_list, 'know'):
 #             Jokes = True
             return 5
-    elif (check_item(my_list, '미세') and check_item(my_list, '먼지')) or check_item(my_list, '미세먼지'):
+    elif (check_item(my_list, 'fine') or check_item(my_list, 'dust')) or check_item(my_list, 'finedust'):
         return 6
-    elif check_item(my_list, '할') and (check_item(my_list, '있어') or check_item(my_list, '알아') or check_item(my_list, '뭐')):
+    elif check_item(my_list, 'able') or (check_item(my_list, 'can') or check_item(my_list, 'possible') or check_item(my_list, 'what can you')):
         return 1000
     else:
         return -1
@@ -70,38 +70,39 @@ def covid(string):
         what_said = string
         if msg_handle(what_said)[0]:
             if msg_handle(what_said)[1] == 0:
-                talk('죄송해요, 오늘, 어제, 그저께에 대한 정보만 지원하고 있습니다. 더 자세한 정보는 보건복지부 홈페이지를 참조하여 주세요.')
+                talk_en('Sorry, I only know about today, yesterday, and day before yesterday. Search internet for more detailed information.')
             elif msg_handle(what_said)[1] == 1:
-                talk('오늘 코로나19 확진자 수는 {}명입니다아.'.format(Daily_Patient()[-1]))
+                talk_en('Reported COVID patient number for today is {}.'.format(Daily_Patient()[-1]))
             elif msg_handle(what_said)[1] == 2:
-                talk('어제 코로나19 확진자 수는 {}명입니다아.'.format(Daily_Patient()[-2]))
+                talk_en('Reported COVID patient number for yesterday is {}.'.format(Daily_Patient()[-2]))
             elif msg_handle(what_said)[1] == 3:
-                talk('그저께 코로나19 확진자 수는 {}명입니다아.'.format(Daily_Patient()[-3]))
+                talk_en('Reported COVID patient number for day before yesterday is {}.'.format(Daily_Patient()[-3]))
         else:
-            talk('죄송해요, 코로나 확진자 수 알림 기능만을 지원하고 있습니다. 다른 답변은 드릴 수가 없네요오.')
+            talk_en('Sorry, I only know about COVID patient number, please search internet for more information.')
 
     except KeyboardInterrupt:
         print('Goodbye.')
 
 def timer_talk(string):
-    from TIMER import timer
-    T = timer(master)
+    from TIMER_en import timer
+    T = timer(string)
     if T >=0:
-        talk('타이머가 설정되었습니다. 시간이 끝나면 세 번 알려드려요오!')
+        talk_en('Your timer has set. I will let you know three times when it is over.')
         sleep(T)
         for _ in range(3):
-            talk('타이머가 끝났습니다!')
+            talk("Times up!")
             sleep(0.5)
     elif T == -1:
-        talk('죄송해요, 타이머 설정 시간을 잘 이해하지 못했습니다아.')
+        talk('Sorry, could you tell me the exact time range once again?')
     elif T == -2:
-        talk('죄송해요, 타이머를 끄는 설정은 아직 준비되어 있지 않습니다. 다음에는 꼭 도움이 되어드리도록 노력하겠습니다.')
+        talk('Sorry we are currently on the preparing level for that service. I will strive to be a better assistant for you next time.')
 
+#미세먼지는 지역이름 때문에 영어 변환이 불가?
 def dust_talk(string):
     from FINE_DUST import DustData
     from FINE_DUST import dust_list
     try:
-        talk('기상청 실시간 공개 데이터 확인 결과, 현재')
+        talk('According to National Weather Service,')
         for i in range(len(dust_list())):
             talk('{}지역에 {} 발령'.format(dust_list()[i].districtName, dust_list()[i].issueGbn))
         talk('발령 중입니다.')
@@ -109,14 +110,16 @@ def dust_talk(string):
         talk('오늘 미세먼지 경보 발령된 지역이 없습니다아.')
 
 
+
+
 """master_handle의 번호에 맞는 모드를 설정하여주는 함수 mode_selection"""
 def mode_selection(mode_number, master):
     if mode_number == -1:
-        talk('죄송해요, 무슨 말인지 잘 알아듣지 못했어요오')
+        talk("Sorry, I could not understand your words")
         
     elif mode_number == 0:
         import weather #날씨 함수 작성
-        talk('죄송합니다, 아직 서비스 준비중입니다!')
+        talk("Sorry, the service haven't prepared yet")
         
     elif mode_number == 1:
         covid(master)
@@ -124,7 +127,21 @@ def mode_selection(mode_number, master):
     elif mode_number == 2:
         from CLOCK import clock
         tik = clock()
-        talk('지금은 {}월 {}일 {}시 {}분 입니다아'.format(tik[0], tik[1], tik[2], tik[3]))
+        calender = {
+        1 : 'January',
+        2:'Feburary',
+        3:'March',
+        4:'April',
+        5:'May',
+        6:'June',
+        7:'July',
+        8:'August',
+        9:'September',
+        10:'October',
+        11:'November',
+        12:'December'
+        }
+        talk('It is {} {}, {} and {}'.format(calender[tik[0]], tik[1], tik[2], tik[3]))
         
     elif mode_number == 3:
         from RAP import rap
@@ -150,7 +167,7 @@ def mode_selection(mode_number, master):
         dust_talk(master)
     
     elif mode_number == 1000:
-        talk('저는 당신을 도와주는 인공지능 스피커입니다. 시계, 타이머, 실시간 코로나 확진자, 미세먼지 경보 발령 현황 등에 대하여 말씀드릴 수 있습니다. 간단한 농담이나 랩도 할 줄 안답니다. 날씨 기능은 업데이트 준비중이에요.')
+        talk('Hi, my name is Amy, your personal A I assistant. You can ask for the followings: clock, timer, covid patient, jokes, rap. Pleased to meet you and have a wonderful day!')
         
 """작동 코드"""
 import RPi.GPIO as g

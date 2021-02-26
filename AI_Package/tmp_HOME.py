@@ -154,6 +154,7 @@ def mode_selection(mode_number, master):
         
 """작동 코드"""
 import RPi.GPIO as g
+from ENG_HOME_MODULE import*
 
 g.setmode(g.BCM)
 sensor = 26
@@ -164,10 +165,16 @@ try:
     while True:
         value = g.input(sensor)
         if value == True:
-            master = listen()[1]
-            print('Sensor Detected')
-            MODE = master_handle(master)
-            mode_selection(MODE, master)
+            try:
+                master = listen()[1]
+                print('Sensor Detected')
+                MODE = master_handle(master)
+                mode_selection(MODE, master)
+            except:
+                master = listen()[0]
+                print('Sensor Detected')
+                MODE = master_handle_en(master)
+                mode_selection_en(MODE, master)
         else:
             pass
 except KeyboardInterrupt:

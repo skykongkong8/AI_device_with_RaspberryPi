@@ -1,5 +1,5 @@
-from universal_mouth import talk_kr as talk
-from universal_mouth import talk_en
+from USB_mouth import talk_kr as talk
+from USB_mouth import talk_en
 from eternal_ears import listen
 from time import sleep
 
